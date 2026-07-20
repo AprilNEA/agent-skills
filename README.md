@@ -28,6 +28,17 @@ Check an existing install without changing links:
 ./install.sh --check
 ```
 
+### Amp Orb Installation
+
+From a pinned checkout of this repository, install only the Amp configuration needed by an orb:
+
+```bash
+./install.sh --orb
+./install.sh --check-orb
+```
+
+Orb mode initializes vendored submodules and links `skills/` to `~/.agents/skills`, `global/AGENTS.md` to `~/.config/AGENTS.md`, and `checks/` to `~/.config/agents/checks`. It does not modify `~/.config/amp/AGENTS.md`, Claude Code, Codex, or Git hooks. Run `--orb` from `.agents/setup`, not `.agents/resume`; pin this repository to a reviewed tag or commit so fresh orbs are reproducible.
+
 After `./install.sh` configures this repository's hook, edits under `global/parts/` are rebuilt automatically before commit.
 
 `global/claude.settings.json` is a reference settings file. Merge it manually instead of symlinking it over an existing `~/.claude/settings.json`.

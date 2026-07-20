@@ -149,11 +149,11 @@ class InstallerTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.temporary_directory.cleanup()
 
-    def run_installer(self) -> subprocess.CompletedProcess[str]:
+    def run_installer(self, *arguments: str) -> subprocess.CompletedProcess[str]:
         env = os.environ.copy()
         env["HOME"] = str(self.home)
         return subprocess.run(
-            [str(self.root / "install.sh")],
+            [str(self.root / "install.sh"), *arguments],
             cwd=self.root,
             env=env,
             text=True,
@@ -190,6 +190,37 @@ class InstallerTests(unittest.TestCase):
         self.assertNotEqual(completed.returncode, 0)
         self.assertTrue(sentinel.exists())
         self.assertIn("Refusing to replace", completed.stderr)
+
+    def test_orb_install_only_links_amp_configuration(self) -> None:
+        before = self.run_installer("--check-orb")
+        installed = self.run_installer("--orb")
+        checked = self.run_installer("--check-orb")
+
+        self.assertNotEqual(before.returncode, 0)
+        self.assertEqual(installed.returncode, 0, installed.stderr)
+        self.assertEqual(checked.returncode, 0, checked.stderr)
+        self.assertEqual(
+            (self.home / ".agents" / "skills").resolve(), (self.root / "skills").resolve()
+        )
+        self.assertEqual(
+            (self.home / ".config" / "AGENTS.md").resolve(),
+            (self.root / "global" / "AGENTS.md").resolve(),
+        )
+        self.assertEqual(
+            (self.home / ".config" / "agents" / "checks").resolve(),
+            (self.root / "checks").resolve(),
+        )
+        self.assertFalse((self.home / ".config" / "amp" / "AGENTS.md").exists())
+        self.assertFalse((self.home / ".claude").exists())
+        self.assertFalse((self.home / ".codex").exists())
+        hooks_path = subprocess.run(
+            ["git", "config", "--local", "--get", "core.hooksPath"],
+            cwd=self.root,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertNotEqual(hooks_path.returncode, 0)
 
 
 if __name__ == "__main__":

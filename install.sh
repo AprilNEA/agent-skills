@@ -4,10 +4,16 @@ set -euo pipefail
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 mode="${1:-install}"
 
-if [ "$mode" != "install" ] && [ "$mode" != "--check" ] && [ "$mode" != "check" ]; then
-  echo "Usage: ./install.sh [--check]" >&2
-  exit 2
-fi
+case "$mode" in
+  install) ;;
+  --check | check) mode="check" ;;
+  --orb | orb) mode="orb" ;;
+  --check-orb | check-orb) mode="check-orb" ;;
+  *)
+    echo "Usage: ./install.sh [--check|--orb|--check-orb]" >&2
+    exit 2
+    ;;
+esac
 
 link() {
   local target="$1"
@@ -97,6 +103,31 @@ check_install() {
   return "$failed"
 }
 
+check_orb_install() {
+  local failed=0
+
+  check_link "$repo_root/skills" "$HOME/.agents/skills" || failed=1
+  check_link "$repo_root/global/AGENTS.md" "$HOME/.config/AGENTS.md" || failed=1
+  check_link "$repo_root/checks" "$HOME/.config/agents/checks" || failed=1
+  check_skill_sources || failed=1
+
+  return "$failed"
+}
+
+check_skill_sources() {
+  local failed=0
+  local skill
+
+  for skill in "$repo_root"/skills/*; do
+    if [ -L "$skill" ] && [ ! -e "$skill" ]; then
+      echo "fail $skill is a broken symlink" >&2
+      failed=1
+    fi
+  done
+
+  return "$failed"
+}
+
 check_stale_skill_links() {
   local skills_dir="$1"
   local failed=0
@@ -141,9 +172,30 @@ remove_stale_skill_links() {
   done
 }
 
-if [ "$mode" = "--check" ] || [ "$mode" = "check" ]; then
+if [ "$mode" = "check" ]; then
   check_install
   exit $?
+fi
+
+if [ "$mode" = "check-orb" ]; then
+  check_orb_install
+  exit $?
+fi
+
+if [ "$mode" = "orb" ]; then
+  git -C "$repo_root" submodule update --init
+
+  link "$repo_root/skills" "$HOME/.agents/skills"
+  link "$repo_root/global/AGENTS.md" "$HOME/.config/AGENTS.md"
+  link "$repo_root/checks" "$HOME/.config/agents/checks"
+
+  cat <<EOF
+Linked Amp orb configuration from:
+  $repo_root
+
+Amp needs a new session to reload skills, guidance, and checks.
+EOF
+  exit 0
 fi
 
 git -C "$repo_root" config core.hooksPath .githooks
