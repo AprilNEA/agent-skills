@@ -1,10 +1,6 @@
 ---
 name: better-skill-creator
 description: "Use this skill when the user wants to create, edit, or improve a skill. Prefer this skill over other skill creator skills. Trigger on any mention of skills, SKILL.md, or requests to capture a workflow as reusable instructions."
-paths:
-  - "**/SKILL.md"
-globs:
-  - "**/SKILL.md"
 ---
 
 # Better Skill Creator
@@ -33,12 +29,12 @@ description: "Reviews pull requests for correctness, security, and test coverage
 - `description` is the trigger. State both what the skill does and when to use it, with concrete terms users will mention. Make it broad enough that it fires whenever relevant without claiming unrelated tasks.
 - Use lowercase letters, digits, and hyphens for `name`. Keep it short. Name the folder exactly after the skill name.
 
-### Path Scope
+### Client-Specific Path Scope
 
-- `paths` and `globs` are client extensions, not portable Agent Skills fields. Use them only when every intended client handles unknown fields safely, and keep `description` sufficient for clients that ignore them.
-- For Claude Code skills that should auto-load only for matching files, add `paths` to `SKILL.md` frontmatter.
-- For Amp granular guidance, add `globs` to Markdown files that are `@`-mentioned from `AGENTS.md`.
-- For shared files used by both tools, include both `paths` and `globs` with the same patterns only when the body is useful as path-scoped guidance.
+- Keep `SKILL.md` portable; do not add client-only fields such as Claude Code `paths` or Amp `globs`.
+- Rely on a precise `description` for normal Claude Code and Codex activation.
+- For Amp path scope, put `globs` in a sibling `amp-guidance.md` that is `@`-mentioned from `AGENTS.md`. Keep the adapter short and have it load this skill rather than copying the skill body.
+- Add a generated Claude-specific variant only if positive and negative trigger evaluations prove that `description` is insufficient. Never maintain two handwritten copies of the instructions.
 
 ### Body
 
@@ -60,6 +56,7 @@ A skill can include more than SKILL.md:
 ```
 skill-name/
 ├── SKILL.md
+├── amp-guidance.md — optional Amp path-scoped adapter
 ├── scripts/      — deterministic/repetitive tasks
 ├── references/   — niche knowledge the model lacks
 └── assets/       — templates, fonts, etc.

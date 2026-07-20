@@ -1,12 +1,6 @@
 ---
 name: rust-coding
 description: "Guides idiomatic Rust implementation and review. Use for any Rust task, especially API design, refactors, conversions, error handling, async code, unsafe code, and tests."
-paths:
-  - "**/*.rs"
-  - "**/Cargo.toml"
-globs:
-  - "**/*.rs"
-  - "**/Cargo.toml"
 ---
 
 # Rust Coding

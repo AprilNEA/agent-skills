@@ -174,5 +174,5 @@ cat <<EOF
 Linked agent-skills from:
   $repo_root
 
-Claude and Codex need a new session to reload skills.
+Amp, Claude, and Codex need a new session to reload skills and guidance.
 EOF

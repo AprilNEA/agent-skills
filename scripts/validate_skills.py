@@ -19,7 +19,6 @@ PORTABLE_FIELDS = {
     "metadata",
     "name",
 }
-CLIENT_EXTENSION_FIELDS = {"globs", "paths"}
 NAME_PATTERN = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 FIELD_PATTERN = re.compile(r"([A-Za-z0-9_-]+):(?:[ \t]*(.*))?")
 MARKDOWN_LINK_PATTERN = re.compile(r"\[[^]]*]\(([^)]+)\)")
@@ -224,6 +223,44 @@ def _validate_mcp(skill_dir: Path, root: Path, result: ValidationResult) -> None
                 )
 
 
+def _validate_amp_guidance(skill_dir: Path, root: Path, result: ValidationResult) -> None:
+    guidance = skill_dir / "amp-guidance.md"
+    if not guidance.exists():
+        return
+
+    parsed = _parse_frontmatter(guidance, root, result)
+    if parsed is None:
+        return
+    text, fields = parsed
+
+    unknown_fields = sorted(set(fields) - {"globs"})
+    if unknown_fields:
+        result.error(guidance, f"unsupported top-level fields: {', '.join(unknown_fields)}", root)
+    if "globs" not in fields:
+        result.error(guidance, "missing required frontmatter field 'globs'", root)
+        return
+
+    raw_value, field_line = fields["globs"]
+    if raw_value.strip():
+        result.error(guidance, "globs must use an indented YAML list", root)
+
+    lines = text.splitlines()
+    closing_index = lines[1:].index("---") + 1
+    patterns: list[str] = []
+    for line_number, line in enumerate(lines[field_line:closing_index], start=field_line + 1):
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        match = re.fullmatch(r"  -[ \t]+(.+)", line)
+        if not match:
+            result.error(guidance, f"line {line_number} is not a canonical globs item", root)
+            continue
+        value = _parse_scalar(guidance, "globs item", match.group(1), line_number, root, result)
+        if value is not None:
+            patterns.append(value)
+    if not patterns:
+        result.error(guidance, "globs must contain at least one pattern", root)
+
+
 def _validate_skill(skill_dir: Path, root: Path, result: ValidationResult) -> None:
     manifest = skill_dir / "SKILL.md"
     if not manifest.is_file():
@@ -235,7 +272,7 @@ def _validate_skill(skill_dir: Path, root: Path, result: ValidationResult) -> No
         return
     text, fields = parsed
 
-    unknown_fields = sorted(set(fields) - PORTABLE_FIELDS - CLIENT_EXTENSION_FIELDS)
+    unknown_fields = sorted(set(fields) - PORTABLE_FIELDS)
     if unknown_fields:
         result.error(manifest, f"unsupported top-level fields: {', '.join(unknown_fields)}", root)
 
@@ -274,6 +311,7 @@ def _validate_skill(skill_dir: Path, root: Path, result: ValidationResult) -> No
 
     _validate_references(skill_dir, manifest, text, root, result)
     _validate_mcp(skill_dir, root, result)
+    _validate_amp_guidance(skill_dir, root, result)
     result.validated += 1
 
 

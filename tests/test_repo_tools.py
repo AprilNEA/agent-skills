@@ -34,16 +34,25 @@ def write_readme(root: Path, *names: str) -> None:
     (root / "README.md").write_text(f"# Skills\n\n{links}\n", encoding="utf-8")
 
 
+def write_amp_guidance(skill_dir: Path, *patterns: str) -> None:
+    items = "\n".join(f"  - {pattern!r}" for pattern in patterns)
+    (skill_dir / "amp-guidance.md").write_text(
+        f"---\nglobs:\n{items}\n---\n\nLoad and follow the matching skill.\n",
+        encoding="utf-8",
+    )
+
+
 class SkillValidatorTests(unittest.TestCase):
-    def test_validates_metadata_references_and_pinned_mcp(self) -> None:
+    def test_validates_references_amp_guidance_and_pinned_mcp(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
             skill = write_skill(
                 root,
                 "browser-testing",
-                'compatibility: "Requires Node.js and network access."\npaths:\n  - "**/*.html"\n',
+                'compatibility: "Requires Node.js and network access."\n',
                 "Read `references/usage.md` when examples are needed.",
             )
+            write_amp_guidance(skill, "**/*.html")
             (skill / "references").mkdir()
             (skill / "references" / "usage.md").write_text("# Usage\n", encoding="utf-8")
             (skill / "mcp.json").write_text(
@@ -64,6 +73,7 @@ class SkillValidatorTests(unittest.TestCase):
             skill = write_skill(
                 root,
                 "browser-testing",
+                extra_frontmatter='paths:\n  - "**/*.html"\n',
                 body="Read `references/missing.md` or [an empty link]( ).",
             )
             manifest = skill / "SKILL.md"
@@ -83,9 +93,24 @@ class SkillValidatorTests(unittest.TestCase):
             messages = "\n".join(validate_repository(root).errors)
 
             self.assertIn("does not match directory", messages)
+            self.assertIn("unsupported top-level fields: paths", messages)
             self.assertIn("bundled reference does not exist", messages)
             self.assertIn("Markdown link has an empty target", messages)
             self.assertIn("pin its npx package", messages)
+
+    def test_rejects_non_list_amp_guidance_globs(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            skill = write_skill(root, "rust-coding")
+            (skill / "amp-guidance.md").write_text(
+                '---\nglobs: "**/*.rs"\n---\n\nLoad the skill.\n', encoding="utf-8"
+            )
+            write_readme(root, "rust-coding")
+
+            messages = "\n".join(validate_repository(root).errors)
+
+            self.assertIn("globs must use an indented YAML list", messages)
+            self.assertIn("globs must contain at least one pattern", messages)
 
     def test_allows_only_vendored_skill_symlinks(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
@@ -117,7 +142,8 @@ class InstallerTests(unittest.TestCase):
             path.parent.mkdir(exist_ok=True)
             path.write_text(f"# {name}\n", encoding="utf-8")
         (self.root / "checks").mkdir()
-        write_skill(self.root, "example")
+        skill = write_skill(self.root, "example")
+        write_amp_guidance(skill, "**/*.example")
         subprocess.run(["git", "init", "-q"], cwd=self.root, check=True)
 
     def tearDown(self) -> None:
@@ -147,6 +173,10 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(
             (self.home / ".claude" / "skills" / "example").resolve(),
             (self.root / "skills" / "example").resolve(),
+        )
+        self.assertEqual(
+            (self.home / ".agents" / "skills" / "example" / "amp-guidance.md").resolve(),
+            (self.root / "skills" / "example" / "amp-guidance.md").resolve(),
         )
 
     def test_install_refuses_to_replace_existing_path(self) -> None:

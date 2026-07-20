@@ -1,5 +1,5 @@
 # Path-Scoped Guidance
 
-See @~/.agents/skills/better-skill-creator/SKILL.md.
-See @~/.agents/skills/rust-coding/SKILL.md.
-See @~/.agents/skills/waku-idiomatic/SKILL.md.
+See @~/.agents/skills/better-skill-creator/amp-guidance.md.
+See @~/.agents/skills/rust-coding/amp-guidance.md.
+See @~/.agents/skills/waku-idiomatic/amp-guidance.md.

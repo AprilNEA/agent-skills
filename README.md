@@ -6,6 +6,8 @@ Use this repo as your user skills directory:
 ./install.sh
 ```
 
+The root-level installer bootstraps this repository's user-wide skills, global instructions, Amp checks, vendored submodules, and Git hook. Individual skills do not have or need their own installers.
+
 `git submodule update --init` populates `vendor/vercel-agent-skills` and `vendor/karpathy-skills`, which the vendored skill symlinks point into. Both submodules are declared `shallow = true` in `.gitmodules`, so this fetches only their pinned commits without full history.
 
 For Amp, `~/.config/amp/settings.json` can also point directly at this directory with `amp.skills.path`. Keep `~/.agents/skills` linked too; Amp path-scoped guidance `@`-mentions that path.
@@ -30,7 +32,7 @@ After `./install.sh` configures this repository's hook, edits under `global/part
 
 `global/claude.settings.json` is a reference settings file. Merge it manually instead of symlinking it over an existing `~/.claude/settings.json`.
 
-Path-scoped guidance uses the client-specific `paths` and `globs` frontmatter extensions. They are not part of the portable Agent Skills format. For Amp, `globs` applies because `global/parts/20-path-scoped.amp.md` explicitly `@`-mentions those files.
+Shared `SKILL.md` files use only portable Agent Skills frontmatter. Amp path-scoped behavior lives in optional sibling `amp-guidance.md` files whose `globs` frontmatter applies because `global/parts/20-path-scoped.amp.md` explicitly `@`-mentions them. Claude Code and Codex rely on each skill's `description`; do not add generated client variants until trigger evaluations show they are necessary.
 
 ## Validation and Maintenance
 
@@ -43,7 +45,7 @@ ruff format --check .
 ruff check .
 ```
 
-The dependency-free validator enforces this repository's canonical one-line frontmatter scalars and naming constraints, bundled references, README inventory, vendored symlink confinement, and Amp `mcp.json` safety basics. It accepts the documented `paths` and `globs` extensions and skips vendored skill contents; review upstream diffs separately when updating submodule pins.
+The dependency-free validator enforces portable frontmatter in first-party `SKILL.md` files, validates Amp guidance globs, bundled references, README inventory, vendored symlink confinement, and Amp `mcp.json` safety basics. It skips vendored skill contents; review upstream diffs separately when updating submodule pins.
 
 For each skill change, manually review what cannot be linted reliably: whether `description` says both what and when without over-triggering, whether the main file contains only always-needed instructions, whether references have explicit loading conditions, and whether positive and negative trigger examples still select the intended skill. Pin executable dependencies, keep credentials out of skill files and fixtures, declare runtime/network requirements with `compatibility`, and restrict bundled MCP servers with `includeTools`.
 
