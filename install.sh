@@ -14,14 +14,32 @@ link() {
   local dest="$2"
 
   mkdir -p "$(dirname -- "$dest")"
-  ln -sfn "$target" "$dest"
+
+  if [ -L "$dest" ] && [ "$(readlink "$dest")" = "$target" ]; then
+    return 0
+  fi
+
+  if [ -e "$dest" ] || [ -L "$dest" ]; then
+    echo "Refusing to replace existing path: $dest" >&2
+    echo "Move or merge it manually, then rerun ./install.sh." >&2
+    return 1
+  fi
+
+  ln -s "$target" "$dest"
 }
 
 ensure_real_dir() {
   local dir="$1"
 
   if [ -L "$dir" ]; then
-    unlink "$dir"
+    echo "Refusing to replace symlinked directory: $dir" >&2
+    echo "Move or merge it manually, then rerun ./install.sh." >&2
+    return 1
+  fi
+
+  if [ -e "$dir" ] && [ ! -d "$dir" ]; then
+    echo "Refusing to replace non-directory path: $dir" >&2
+    return 1
   fi
 
   mkdir -p "$dir"
@@ -31,7 +49,7 @@ check_link() {
   local target="$1"
   local dest="$2"
 
-  if [ -L "$dest" ] && [ "$(realpath "$dest")" = "$(realpath "$target")" ]; then
+  if [ -L "$dest" ] && [ "$(readlink "$dest")" = "$target" ]; then
     echo "ok   $dest"
     return 0
   fi
@@ -81,6 +99,7 @@ check_install() {
 
 check_stale_skill_links() {
   local skills_dir="$1"
+  local failed=0
   local link
   local target
 
@@ -94,11 +113,13 @@ check_stale_skill_links() {
       "$repo_root"/skills/*)
         if [ ! -e "$target" ]; then
           echo "fail $link is a stale skill link" >&2
-          return 1
+          failed=1
         fi
         ;;
     esac
   done
+
+  return "$failed"
 }
 
 remove_stale_skill_links() {

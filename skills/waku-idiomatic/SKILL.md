@@ -1,6 +1,7 @@
 ---
 name: waku-idiomatic
-description: "Use whenever a Waku project is involved. Trigger on any mention of Waku, waku.gg, or React Server Components in a Waku context."
+description: "Applies repository conventions for Waku routing, rendering, server/client boundaries, state, metadata, and middleware. Use when implementing or reviewing a Waku project, or when Waku, waku.gg, or React Server Components in a Waku context are mentioned."
+compatibility: "Requires Waku v1.0.0-alpha.5; review these conventions before using them with another version."
 paths:
   - "**/waku.config.*"
 globs:

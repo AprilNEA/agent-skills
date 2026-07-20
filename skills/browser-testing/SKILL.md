@@ -1,11 +1,13 @@
 ---
 name: browser-testing
 description: "Uses Playwright browser automation for web UI testing, debugging, screenshots, console/network inspection, and interactive browser workflows. Use when a task needs browser interaction or visual verification."
+compatibility: "Amp requires Node.js, npx, and network access for the bundled MCP server. Other agents need equivalent Playwright browser tools configured separately."
 ---
 
 # Browser Testing
 
 Use Playwright only when browser behavior matters: UI flows, screenshots, DOM inspection, console errors, network requests, or visual verification.
+If the browser tools are unavailable, report the missing prerequisite instead of silently substituting unrelated automation.
 
 ## Workflow
 

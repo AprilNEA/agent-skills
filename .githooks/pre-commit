@@ -1,3 +1,8 @@
 #!/bin/sh
-make -B -C global
-git add global/CLAUDE.md global/CODEX.md global/AGENTS.md
+set -eu
+
+repo_root="$(git rev-parse --show-toplevel)"
+
+make -B -C "$repo_root/global"
+python3 "$repo_root/scripts/validate_skills.py" "$repo_root"
+git add "$repo_root/global/CLAUDE.md" "$repo_root/global/CODEX.md" "$repo_root/global/AGENTS.md"

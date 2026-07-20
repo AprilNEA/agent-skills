@@ -26,15 +26,16 @@ A skill is a reusable package of instructions and optional resources for a recur
 ```yaml
 ---
 name: skill-name
-description: "When to trigger. Keep it broad — one sentence."
+description: "Reviews pull requests for correctness, security, and test coverage. Use when reviewing a PR or code diff."
 ---
 ```
 
-- `description` is the trigger. Put all "when to use" information there: what the skill does and the situations that should trigger it. Make it broad enough that it fires whenever relevant. The model undertriggers — err on the side of pushy.
+- `description` is the trigger. State both what the skill does and when to use it, with concrete terms users will mention. Make it broad enough that it fires whenever relevant without claiming unrelated tasks.
 - Use lowercase letters, digits, and hyphens for `name`. Keep it short. Name the folder exactly after the skill name.
 
 ### Path Scope
 
+- `paths` and `globs` are client extensions, not portable Agent Skills fields. Use them only when every intended client handles unknown fields safely, and keep `description` sufficient for clients that ignore them.
 - For Claude Code skills that should auto-load only for matching files, add `paths` to `SKILL.md` frontmatter.
 - For Amp granular guidance, add `globs` to Markdown files that are `@`-mentioned from `AGENTS.md`.
 - For shared files used by both tools, include both `paths` and `globs` with the same patterns only when the body is useful as path-scoped guidance.
@@ -50,7 +51,7 @@ The model has senior-level knowledge but generic habits. Every line in SKILL.md 
 
 ### Size
 
-Ideal SKILL.md is under 100 lines. Hard limit for SKILL.md itself is 200 lines.
+This repository targets fewer than 100 lines and requires review before exceeding 200. The portable format recommends fewer than 500 lines and 5,000 tokens; move detail into bundled resources well before that point.
 
 ### Bundled Resources
 
