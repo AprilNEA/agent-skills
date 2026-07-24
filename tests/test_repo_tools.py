@@ -42,6 +42,27 @@ def write_amp_guidance(skill_dir: Path, *patterns: str) -> None:
     )
 
 
+def write_check(
+    root: Path,
+    filename: str,
+    name: str,
+    extra_frontmatter: str = "",
+) -> Path:
+    checks_dir = root / "checks"
+    checks_dir.mkdir(exist_ok=True)
+    check = checks_dir / filename
+    check.write_text(
+        "---\n"
+        f"name: {name}\n"
+        'description: "Reviews applicable changes."\n'
+        f"{extra_frontmatter}"
+        "---\n\n"
+        "Review the changes.\n",
+        encoding="utf-8",
+    )
+    return check
+
+
 class SkillValidatorTests(unittest.TestCase):
     def test_validates_references_amp_guidance_and_pinned_mcp(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
@@ -127,6 +148,41 @@ class SkillValidatorTests(unittest.TestCase):
 
             self.assertEqual(result.skipped, 1)
             self.assertTrue(any("must stay inside vendor" in error for error in result.errors))
+
+
+class CheckValidatorTests(unittest.TestCase):
+    def test_validates_check_frontmatter(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            write_readme(root)
+            write_check(
+                root,
+                "controlled-technical-english.md",
+                "controlled-technical-english",
+                "severity-default: low\n",
+            )
+
+            result = validate_repository(root)
+
+            self.assertEqual(result.errors, [])
+            self.assertEqual(result.validated_checks, 1)
+
+    def test_rejects_invalid_check_frontmatter(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            write_readme(root)
+            write_check(
+                root,
+                "controlled-technical-english.md",
+                "other-check",
+                "severity-default: urgent\nunknown-field: value\n",
+            )
+
+            messages = "\n".join(validate_repository(root).errors)
+
+            self.assertIn("unsupported top-level fields: unknown-field", messages)
+            self.assertIn("does not match filename", messages)
+            self.assertIn("severity-default must be one of", messages)
 
 
 class InstallerTests(unittest.TestCase):

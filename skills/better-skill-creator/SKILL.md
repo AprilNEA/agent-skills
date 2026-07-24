@@ -44,6 +44,7 @@ The model has senior-level knowledge but generic habits. Every line in SKILL.md 
 - Prefer imperative sentences. "Use X" not "You should consider using X".
 - If a section has one sentence, it doesn't need a heading — fold it into a neighbor.
 - One example is worth including only if the convention is ambiguous without it. Zero is usually fine.
+- When writing or revising English instructions, read and apply `references/controlled-technical-english.md`. Preserve exact technical names and do not claim formal ASD-STE100 conformance.
 
 ### Size
 

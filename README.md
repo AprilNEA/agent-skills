@@ -45,6 +45,14 @@ After `./install.sh` configures this repository's hook, edits under `global/part
 
 Shared `SKILL.md` files use only portable Agent Skills frontmatter. Amp path-scoped behavior lives in optional sibling `amp-guidance.md` files whose `globs` frontmatter applies because `global/parts/20-path-scoped.amp.md` explicitly `@`-mentions them. Claude Code and Codex rely on each skill's `description`; do not add generated client variants until trigger evaluations show they are necessary.
 
+## Controlled Technical English
+
+The generated global instructions and `better-skill-creator` use a controlled writing profile inspired by ASD-STE100 Simplified Technical English. Apply it to English agent instructions, setup and check messages, safety guidance, and substantive code comments. Preserve exact commands, paths, identifiers, API names, product names, protocol terms, and quoted text.
+
+The detailed team profile and terminology are in [controlled-technical-english.md](skills/better-skill-creator/references/controlled-technical-english.md). The global Amp installation also provides `controlled-technical-english` as an advisory review check. The check reports material ambiguity; it does not reject text only for sentence length or vocabulary.
+
+This repository does not claim formal ASD-STE100 conformance and does not redistribute the official controlled dictionary or standard. Request the current standard from the [ASD-STE100 official site](https://www.asd-ste100.org/STE_downloads.html) when formal conformance is required.
+
 ## Validation and Maintenance
 
 Run the repository checks before committing skill or installer changes:
@@ -56,7 +64,7 @@ ruff format --check .
 ruff check .
 ```
 
-The dependency-free validator enforces portable frontmatter in first-party `SKILL.md` files, validates Amp guidance globs, bundled references, README inventory, vendored symlink confinement, and Amp `mcp.json` safety basics. It skips vendored skill contents; review upstream diffs separately when updating submodule pins.
+The dependency-free validator enforces portable frontmatter in first-party `SKILL.md` files, validates Amp guidance globs, bundled references, check frontmatter, README inventory, vendored symlink confinement, and Amp `mcp.json` safety basics. It skips vendored skill contents; review upstream diffs separately when updating submodule pins.
 
 For each skill change, manually review what cannot be linted reliably: whether `description` says both what and when without over-triggering, whether the main file contains only always-needed instructions, whether references have explicit loading conditions, and whether positive and negative trigger examples still select the intended skill. Pin executable dependencies, keep credentials out of skill files and fixtures, declare runtime/network requirements with `compatibility`, and restrict bundled MCP servers with `includeTools`.
 

@@ -19,6 +19,8 @@ PORTABLE_FIELDS = {
     "metadata",
     "name",
 }
+CHECK_FIELDS = {"description", "name", "severity-default", "tools"}
+CHECK_SEVERITIES = {"critical", "high", "low", "medium"}
 NAME_PATTERN = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 FIELD_PATTERN = re.compile(r"([A-Za-z0-9_-]+):(?:[ \t]*(.*))?")
 MARKDOWN_LINK_PATTERN = re.compile(r"\[[^]]*]\(([^)]+)\)")
@@ -36,6 +38,7 @@ class ValidationResult:
     errors: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
     validated: int = 0
+    validated_checks: int = 0
     skipped: int = 0
 
     def error(self, path: Path, message: str, root: Path) -> None:
@@ -315,6 +318,51 @@ def _validate_skill(skill_dir: Path, root: Path, result: ValidationResult) -> No
     result.validated += 1
 
 
+def _validate_check(check: Path, root: Path, result: ValidationResult) -> None:
+    parsed = _parse_frontmatter(check, root, result)
+    if parsed is None:
+        return
+    _, fields = parsed
+
+    unknown_fields = sorted(set(fields) - CHECK_FIELDS)
+    if unknown_fields:
+        result.error(check, f"unsupported top-level fields: {', '.join(unknown_fields)}", root)
+
+    if "name" not in fields:
+        result.error(check, "missing required frontmatter field 'name'", root)
+    else:
+        raw_value, line_number = fields["name"]
+        name = _parse_scalar(check, "name", raw_value, line_number, root, result)
+        if name is not None:
+            if not NAME_PATTERN.fullmatch(name):
+                result.error(
+                    check, "name must use ASCII lowercase letters, digits, or hyphens", root
+                )
+            if name != check.stem:
+                result.error(check, f"name '{name}' does not match filename '{check.stem}'", root)
+
+    if "description" in fields:
+        raw_value, line_number = fields["description"]
+        _parse_scalar(check, "description", raw_value, line_number, root, result)
+
+    if "severity-default" in fields:
+        raw_value, line_number = fields["severity-default"]
+        severity = _parse_scalar(check, "severity-default", raw_value, line_number, root, result)
+        if severity is not None and severity not in CHECK_SEVERITIES:
+            allowed = ", ".join(sorted(CHECK_SEVERITIES))
+            result.error(check, f"severity-default must be one of: {allowed}", root)
+
+    result.validated_checks += 1
+
+
+def _validate_checks(root: Path, result: ValidationResult) -> None:
+    checks_dir = root / "checks"
+    if not checks_dir.is_dir():
+        return
+    for check in sorted(checks_dir.glob("*.md")):
+        _validate_check(check, root, result)
+
+
 def _skill_entries(root: Path) -> set[tuple[str, str]]:
     entries: set[tuple[str, str]] = set()
     for directory_name in ("skills", "project-skills"):
@@ -358,6 +406,7 @@ def validate_repository(root: Path) -> ValidationResult:
             continue
         _validate_skill(skill_dir, root, result)
 
+    _validate_checks(root, result)
     _validate_readme(root, actual, result)
     return result
 
@@ -387,7 +436,8 @@ def main() -> int:
         )
         return 1
     print(
-        f"Validated {result.validated} first-party skill(s); "
+        f"Validated {result.validated} first-party skill(s) and "
+        f"{result.validated_checks} check(s); "
         f"skipped {result.skipped} vendored skill(s); {len(result.warnings)} warning(s)."
     )
     return 0
