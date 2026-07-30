@@ -21,7 +21,7 @@ Resolve teams, projects, labels, statuses, and people **by name** (`list_teams`,
 ## While Working
 
 - **Sync through comments** (`save_comment`), promptly. When you hit a blocker, change approach, or learn something that shifts scope, leave a comment — don't let the issue drift from reality, and don't bury the change by rewriting the description.
-- **Move status as it changes**: In Progress when you start, In Review when a PR is open, Done when merged.
+- **Move status as it changes**: In Progress when you start, In Review only when reviewers can access a linked review artifact, and Done when the result is accepted or merged.
 
 ## Editing the Description
 
@@ -43,6 +43,9 @@ The description is the agreed spec. Once an issue is old, accepted, or has discu
 ## Status & Branch Linking
 
 - Lifecycle: Backlog → Todo → In Progress → In Review → Done (plus Canceled, Duplicate). Resolve names with `list_issue_statuses(team)`; teams may differ.
+- **Review gate**: Move an issue to In Review only when a reviewer can act on a related artifact. Qualifying artifacts include an open PR with reviewable changes, a shared design or document, a deployed prototype, or another concrete result that colleagues can access.
+- Link the artifact to the issue through the GitHub integration or an issue comment. State what is ready and what feedback or decision is needed.
+- Local commits, an unpushed branch, a private draft, or a progress summary do not qualify. Keep the issue In Progress until the artifact is accessible.
 - Use the issue's `gitBranchName` (from `get_issue`) as the git branch — Linear's GitHub integration then auto-links the branch and PR and advances status.
 
 ## Tooling
