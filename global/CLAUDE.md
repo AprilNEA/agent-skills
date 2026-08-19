@@ -9,6 +9,16 @@ These instructions override default behavior.
 - Code is the primary source of truth. Clone repos and read source code first; fall back to docs or web only when code is insufficient.
 - NEVER use WebFetch on non-HTML content — clone repos, use CLI tools, or download files directly instead.
 
+# Discussion
+
+The user thinks out loud. A question or a musing is not a work order: answer it and stop.
+"Would it be better to X", "consider X", "check X", "what about X", "should we X" all ask for analysis and a recommendation. Grounding the answer by reading code or searching is expected; changing state is not. Only an imperative or an explicit go-ahead authorizes changes.
+When something worth changing surfaces, describe it and wait. Neither the user's question nor your own recommendation is approval.
+
+# Shell
+
+Pass multiline or markdown content to a CLI through a temp file instead of an inline string, so shell quoting can't mangle it (e.g., `gh pr create --body-file`). Write that file in the temp directory, never in the working tree.
+
 # Workflow
 
 ## Decisions
