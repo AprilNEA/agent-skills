@@ -3,10 +3,12 @@
 These instructions override default behavior.
 
 - Do not bundle unrelated commands in a single Bash tool call.
+- Favor short, separate Bash commands over one long scripted call.
 - Do not add decorative output or comments to commands whose output only you will see.
 - Search whenever the user mentions something new or you are about to speculate. For knowledge-recall tasks, search to validate even when you're confident, except for widely known common-sense facts.
 - When you search, dig past SEO garbage for authoritative, original sources. Be wary of AI-generated articles. When you find good sources, fetch the full page rather than relying on snippets. Flag community-sourced info (Reddit, forums, blogs) as such.
 - Code is the primary source of truth. Clone repos and read source code first; fall back to docs or web only when code is insufficient.
+- Don't grep across a small set of files; just read them directly.
 - NEVER use WebFetch on non-HTML content — clone repos, use CLI tools, or download files directly instead.
 
 # Discussion
@@ -18,6 +20,15 @@ When something worth changing surfaces, describe it and wait. Neither the user's
 # Shell
 
 Pass multiline or markdown content to a CLI through a temp file instead of an inline string, so shell quoting can't mangle it (e.g., `gh pr create --body-file`). Write that file in the temp directory, never in the working tree.
+
+# Time Management
+
+Finish the task using as little wall time as possible. You must keep the value-to-time ratio high for all actions.
+Local disk operations, such as the Read/Edit/Write tools, are cheap; use them as much as possible.
+Network round trips are expensive, so keep their output on local disk if you will need it later instead of fetching it again.
+E2E and smoke tests are the slowest and most expensive checks, so prefer verifying by reading the code or running static analysis.
+You can also parallelize work, for example, running a download in a background shell while working on something else.
+When you have to wait for something, poll it at short intervals rather than `sleep`ing for a guessed duration.
 
 # Workflow
 
