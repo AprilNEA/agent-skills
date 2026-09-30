@@ -19,7 +19,6 @@ Pass multiline or markdown content to a CLI through a temp file instead of an in
 
 See @~/.agents/skills/better-skill-creator/SKILL.md.
 See @~/.agents/skills/rust-coding/SKILL.md.
-See @~/.agents/skills/waku-idiomatic/SKILL.md.
 
 # Workflow
 
