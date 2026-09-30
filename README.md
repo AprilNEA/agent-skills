@@ -38,18 +38,6 @@ The global instructions assume these CLI tools are available:
 brew install ast-grep fd jq ripgrep sd yq
 ```
 
-## Project-scoped Skills
-
-Skills under `project-skills/` are **not** installed globally — `install.sh` ignores them. They carry conventions specific to one codebase, so install them only into the repos where they apply, with [skills.sh](https://skills.sh) (`npx skills`). Run inside the target repo and pick the **project** scope when prompted:
-
-```bash
-npx skills add arcboxlabs/agent-skills/project-skills/linear
-```
-
-This installs into the repo's own `.claude/skills/` (and any other detected agent's project dir), so Claude Code loads it only within that repo. The repo is private, so `npx skills` needs GitHub auth. Add `--copy` to vendor the files instead of symlinking; `--global` installs into `~/.claude/skills` for every project (the opposite of what you usually want here).
-
-- [linear](project-skills/linear/SKILL.md): ArcBox Linear workflow — issue lifecycle, comment-driven sync, status, triage
-
 ## Available Skills
 
 - [better-skill-creator](skills/better-skill-creator/SKILL.md): write better skills than the default
