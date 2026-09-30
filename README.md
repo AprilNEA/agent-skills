@@ -63,6 +63,8 @@ This installs into the repo's own `.claude/skills/` (and any other detected agen
 Symlinked from `vendor/vercel-agent-skills` ([vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills)):
 
 - [react-best-practices](skills/react-best-practices/SKILL.md): React and Next.js performance patterns from Vercel Engineering
+- [composition-patterns](skills/composition-patterns/SKILL.md): React composition patterns for compound components, render props, and context providers
+- [web-design-guidelines](skills/web-design-guidelines/SKILL.md): review UI code against Vercel's Web Interface Guidelines
 
 Symlinked from `vendor/karpathy-skills` ([multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills)):
 
