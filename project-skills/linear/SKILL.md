@@ -22,6 +22,7 @@ Resolve teams, projects, labels, statuses, and people **by name** (`list_teams`,
 
 - **Sync through comments** (`save_comment`), promptly. When you hit a blocker, change approach, or learn something that shifts scope, leave a comment — don't let the issue drift from reality, and don't bury the change by rewriting the description.
 - **Move status as it changes**: In Progress when you start, In Review when a PR is open, Done when merged.
+- **Treat the issue as a problem statement, not a work order.** Validate its premise independently and look for a better solution instead of blindly implementing the fix it suggests.
 
 ## Editing the Description
 
@@ -44,6 +45,7 @@ The description is the agreed spec. Once an issue is old, accepted, or has discu
 
 - Lifecycle: Backlog → Todo → In Progress → In Review → Done (plus Canceled, Duplicate). Resolve names with `list_issue_statuses(team)`; teams may differ.
 - Use the issue's `gitBranchName` (from `get_issue`) as the git branch — Linear's GitHub integration then auto-links the branch and PR and advances status.
+- Never put Linear issue IDs in code comments; they are internal. PR titles or bodies should include the issue ID.
 
 ## Tooling
 
