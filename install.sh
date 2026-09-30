@@ -126,6 +126,7 @@ if [ "$mode" = "--check" ] || [ "$mode" = "check" ]; then
 fi
 
 git -C "$repo_root" config core.hooksPath .githooks
+git -C "$repo_root" config submodule.recurse true
 git -C "$repo_root" submodule update --init
 
 link "$repo_root/skills" "$HOME/.agents/skills"

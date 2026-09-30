@@ -67,3 +67,11 @@ Symlinked from `vendor/vercel-agent-skills` ([vercel-labs/agent-skills](https://
 Symlinked from `vendor/karpathy-skills` ([multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills)):
 
 - [karpathy-guidelines](skills/karpathy-guidelines/SKILL.md): behavioral guidelines to reduce common LLM coding mistakes
+
+Symlinked from `vendor/rust-skills` ([leonardomso/rust-skills](https://github.com/leonardomso/rust-skills)):
+
+- [rust-skills](skills/rust-skills/SKILL.md): 265 idiomatic Rust rules across 26 categories, loaded per rule on demand; `rust-coding` wins on conflicts
+
+Symlinked from `vendor/vercel-skills` ([vercel-labs/skills](https://github.com/vercel-labs/skills)):
+
+- [find-skills](skills/find-skills/SKILL.md): discover and install skills from skills.sh with `npx skills`
