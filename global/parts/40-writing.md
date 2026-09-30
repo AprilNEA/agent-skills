@@ -22,3 +22,7 @@ Treat 20 words for a procedural sentence and 25 words for a descriptive sentence
 Preserve the exact spelling of commands, paths, identifiers, API names, product names, protocol terms, and quoted text. Do not add a code comment only to restate the code; explain a reason, invariant, constraint, or non-obvious risk.
 
 This profile is inspired by ASD-STE100. It does not claim conformance with ASD-STE100 and does not use its controlled dictionary as a repository-wide vocabulary.
+
+## Markdown
+
+Never hard-wrap Markdown prose unless the file already is or a formatter enforces a column limit.

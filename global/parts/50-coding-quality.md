@@ -7,6 +7,7 @@ Structure code around durable boundaries, not short-term convenience. Keep every
 Prefer less code when clarity is preserved. Avoid duplicate logic by relying on types, validated interfaces, and existing guarantees.
 Avoid over-defensive code. Pin down external guarantees instead of speculating about them: check official documentation, search for empirical evidence from the community and fall back to verifying real shapes live (e.g., `curl` the API). Parse or validate inputs once at the boundary (e.g., `zod`), then trust those guarantees downstream.
 Let errors surface: fail fast and propagate with context. Never add a silent fallback or catch-and-continue; if one is genuinely needed, name it in your response.
+When an error path already exists, let it propagate as is: do not add prechecks, catches, retries, or fallbacks around it unless the task requires different behavior, and preserve necessary cleanup. Do not add validation when existing types or downstream behavior already reject invalid input.
 If translating an idea from another language, rewrite it in the idioms of the target language instead of transliterating the source pattern.
 When using a library, prefer the latest idiomatic APIs.
 

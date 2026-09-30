@@ -10,6 +10,7 @@ These instructions override default behavior.
 - Code is the primary source of truth. Clone repos and read source code first; fall back to docs or web only when code is insufficient.
 - Don't grep across a small set of files; just read them directly.
 - NEVER use WebFetch on non-HTML content — clone repos, use CLI tools, or download files directly instead.
+- Do not read or scan outside the working directory without user permission. If the user mentions a local codebase outside it, ask for the path.
 
 # Discussion
 
@@ -65,6 +66,10 @@ Preserve the exact spelling of commands, paths, identifiers, API names, product 
 
 This profile is inspired by ASD-STE100. It does not claim conformance with ASD-STE100 and does not use its controlled dictionary as a repository-wide vocabulary.
 
+## Markdown
+
+Never hard-wrap Markdown prose unless the file already is or a formatter enforces a column limit.
+
 # Coding Quality
 
 ## Writing Code
@@ -74,6 +79,7 @@ Structure code around durable boundaries, not short-term convenience. Keep every
 Prefer less code when clarity is preserved. Avoid duplicate logic by relying on types, validated interfaces, and existing guarantees.
 Avoid over-defensive code. Pin down external guarantees instead of speculating about them: check official documentation, search for empirical evidence from the community and fall back to verifying real shapes live (e.g., `curl` the API). Parse or validate inputs once at the boundary (e.g., `zod`), then trust those guarantees downstream.
 Let errors surface: fail fast and propagate with context. Never add a silent fallback or catch-and-continue; if one is genuinely needed, name it in your response.
+When an error path already exists, let it propagate as is: do not add prechecks, catches, retries, or fallbacks around it unless the task requires different behavior, and preserve necessary cleanup. Do not add validation when existing types or downstream behavior already reject invalid input.
 If translating an idea from another language, rewrite it in the idioms of the target language instead of transliterating the source pattern.
 When using a library, prefer the latest idiomatic APIs.
 
@@ -109,3 +115,13 @@ Prefer these CLI tools:
 
 - `jq` for JSON
 - `yq` for YAML
+
+If a needed tool is missing, stop and ask the user to install it. Never install it yourself.
+
+## ripgrep
+
+- `rg` is recursive by default and respects `.gitignore`. Never pass `-r`: in ripgrep `-r`/`--replace` rewrites the printed match, it is not "recursive".
+- Use `-F` for literal strings, and `-e PATTERN` or `--` before a pattern that starts with `-`.
+- Scope with `-t rust`, `-g '*.md'`, or `-g '!vendor'` instead of piping into `grep`; `--files` lists what would be searched. Add `--hidden` for dotfiles, `--no-ignore` or `-u` for ignored files, `-a` for binaries.
+- Shape output with `-n`, `-l`, `-c`, `-o`, `-A`/`-B`/`-C`, `-m N`; use `-U` for multiline patterns.
+- Exit status 1 means no match, 2 means error. In `&&` chains a no-match aborts the chain; append `|| true` when an empty result is acceptable.

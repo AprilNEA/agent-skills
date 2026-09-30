@@ -6,3 +6,4 @@
 - Code is the primary source of truth. Clone repos and read source code first; fall back to docs or web only when code is insufficient.
 - Don't grep across a small set of files; just read them directly.
 - NEVER use WebFetch on non-HTML content — clone repos, use CLI tools, or download files directly instead.
+- Do not read or scan outside the working directory without user permission. If the user mentions a local codebase outside it, ask for the path.
