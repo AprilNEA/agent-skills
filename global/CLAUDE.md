@@ -41,6 +41,7 @@ Never hard-wrap Markdown prose unless the file already is or a formatter enforce
 Keep public APIs minimal and elegant. Structure code around durable boundaries, not short-term convenience. Keep every file reasonably sized, and break it down when it gets large. Prefer less code when clarity is preserved. Avoid duplicate logic by relying on types, validated interfaces, and existing guarantees.
 Avoid over-defensive code. Pin down external guarantees instead of speculating about them: check official documentation, validate inputs once at the boundary (e.g., `zod`), verify real shapes empirically (e.g., `curl` the API), then trust those guarantees downstream.
 Let errors surface: fail fast and propagate with context. No silent fallbacks or catch-and-continue without user approval.
+When an error path already exists, let it propagate as is: do not add prechecks, catches, retries, or fallbacks around it unless the task requires different behavior, and preserve necessary cleanup. Do not add validation when existing types or downstream behavior already reject invalid input.
 
 ## Dependencies
 
