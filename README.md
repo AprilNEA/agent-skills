@@ -75,7 +75,7 @@ Authoritative references: [Agent Skills specification](https://agentskills.io/sp
 The global instructions assume these CLI tools are available:
 
 ```bash
-brew install jq yq
+brew install ast-grep fd jq ripgrep sd yq
 ```
 
 ## Available Skills
