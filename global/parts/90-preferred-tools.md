@@ -8,3 +8,5 @@ Prefer these CLI tools:
 - `rg` (ripgrep) over `grep`
 - `sd` over `sed`
 - `yq` for YAML
+
+If a needed tool is missing, stop and ask the user to install it. Never install it yourself.

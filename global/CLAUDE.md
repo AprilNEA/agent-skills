@@ -8,8 +8,17 @@ These instructions override default behavior.
 - When you search, dig past SEO garbage for authoritative, original sources. Be wary of AI-generated articles. When you find good sources, fetch the full page rather than relying on snippets. Flag community-sourced info (Reddit, forums, blogs) as such.
 - Code is the primary source of truth. Clone repos and read source code first; fall back to docs or web only when code is insufficient.
 - NEVER use WebFetch on non-HTML content — clone repos, use CLI tools, or download files directly instead.
+- Do not read or scan outside the working directory without user permission. If the user mentions a local codebase outside it, ask for the path.
+
+# Shell
+
+Pass multiline or markdown content to a CLI through a temp file instead of an inline string, so shell quoting can't mangle it (e.g., `gh pr create --body-file`). Write that file in the temp directory, never in the working tree.
 
 # Workflow
+
+## Discussion
+
+Questions and tentative requests ("consider X", "check X", "should we X") ask for analysis, not changes. Inspect relevant code or search as useful; neither authorizes changes. Make changes only on a clear work order or explicit approval.
 
 ## Decisions
 
@@ -22,6 +31,8 @@ For non-trivial tasks, define the concrete check that proves the work is done �
 # Writing
 
 In Chinese text, use corner brackets 「」for quotes and always insert a space at CJK/Latin and CJK/digit boundaries.
+
+Never hard-wrap Markdown prose unless the file already is or a formatter enforces a column limit.
 
 # Coding Quality
 
@@ -59,7 +70,7 @@ Keep the README to purpose, usage, and a minimal example.
 ## Git
 
 Create a branch (`<type>/<description>`) for substantial or risky changes. Direct commits to `main`/`master` are acceptable for low-risk work or early-stage projects.
-Commit frequently and autonomously instead of batching large changes.
+Commit frequently and autonomously instead of batching large changes. The user is responsible for pushing.
 Follow the project's existing commit message convention. If none, use `<type>(<scope>): <description>`.
 Before committing, formatter, linter, and tests must pass.
 
@@ -73,6 +84,7 @@ Any lint or type-check suppression must include a justification — use the lint
 
 Do not add shortcuts that bypass type checks, lint, or tests without user approval.
 Do not add environment-specific workarounds without user approval. Keep the implementation direct and clean.
+If the environment blocks verification, report it rather than adding a workaround.
 
 # Preferred Tools
 
@@ -84,3 +96,5 @@ Prefer these CLI tools:
 - `rg` (ripgrep) over `grep`
 - `sd` over `sed`
 - `yq` for YAML
+
+If a needed tool is missing, stop and ask the user to install it. Never install it yourself.

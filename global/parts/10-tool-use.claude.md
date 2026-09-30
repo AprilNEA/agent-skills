@@ -4,3 +4,4 @@
 - When you search, dig past SEO garbage for authoritative, original sources. Be wary of AI-generated articles. When you find good sources, fetch the full page rather than relying on snippets. Flag community-sourced info (Reddit, forums, blogs) as such.
 - Code is the primary source of truth. Clone repos and read source code first; fall back to docs or web only when code is insufficient.
 - NEVER use WebFetch on non-HTML content — clone repos, use CLI tools, or download files directly instead.
+- Do not read or scan outside the working directory without user permission. If the user mentions a local codebase outside it, ask for the path.

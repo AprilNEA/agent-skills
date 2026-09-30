@@ -34,7 +34,7 @@ Keep the README to purpose, usage, and a minimal example.
 ## Git
 
 Create a branch (`<type>/<description>`) for substantial or risky changes. Direct commits to `main`/`master` are acceptable for low-risk work or early-stage projects.
-Commit frequently and autonomously instead of batching large changes.
+Commit frequently and autonomously instead of batching large changes. The user is responsible for pushing.
 Follow the project's existing commit message convention. If none, use `<type>(<scope>): <description>`.
 Before committing, formatter, linter, and tests must pass.
 
@@ -48,3 +48,4 @@ Any lint or type-check suppression must include a justification — use the lint
 
 Do not add shortcuts that bypass type checks, lint, or tests without user approval.
 Do not add environment-specific workarounds without user approval. Keep the implementation direct and clean.
+If the environment blocks verification, report it rather than adding a workaround.
